@@ -3,7 +3,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Main {
-
+	private static boolean logenabled = true;
 	private static int numTest = 0;
 	private static int numLetras = 0;
 	private static int numPalabras = 0;
@@ -14,7 +14,10 @@ public class Main {
 	private static HashMap <String, Integer> correspondencias = new HashMap < String,Integer>();
 
 	public static void main(String [] args) {
-
+		pedirEntrada();
+		
+		decodificarPalabras();
+		resolverCorrespondencias();
 
 	}
 
@@ -24,6 +27,7 @@ public class Main {
 
 		
 		numTest = scan.nextInt();
+		log("numTest= " + Integer.toString(numTest));
 
 		for(int i=0; i<numTest; i++) {
 			pedirTest(scan);
@@ -34,16 +38,24 @@ public class Main {
 	public static void pedirTest(Scanner scan) {
 		numLetras = scan.nextInt();
 		numPalabras = scan.nextInt();
+		log("numletras= " + Integer.toString(numLetras));
+		log("numPalabras= " + Integer.toString(numPalabras));
 
 		palabras.clear();
 		diccionario.clear();
 
+		scan.nextLine(); // evitar la primera linea vacia
 		for (int i=0; i<numPalabras; i++) {
-			palabras.add(scan.nextLine());
+			String str = scan.nextLine();
+			palabras.add(str);
+
+		log("palabras[" + Integer.toString(i) + "]=" + str);
 
 		}
 
 		clave = scan.nextLine();
+		inicializarCorrespondencias(clave);
+		log("clave= " + clave);
 		int indice = 1;
 		for(char c : clave.toCharArray()) {
 			if(anyadirCorrespondencias(c + "" ,indice)) {
@@ -85,10 +97,22 @@ public class Main {
 	}
 
 	public static boolean anyadirCorrespondencias(String letra ,Integer numero) {
+
+		log("añadircorrespondencias: letra= "+ letra + "  numero= "  + Integer.toString(numero));
 		if(correspondencias.get(letra)<=0) {
 			correspondencias.put(letra,numero);
 			return true;
 		}
 		return false;
+	}
+
+	public static void resolverCorrespondencias() {
+
+	}
+
+	public static void log(String msj) {
+		if(logenabled) {
+			System.out.println(msj);
+		}
 	}
 }
