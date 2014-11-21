@@ -60,7 +60,7 @@ public class Main {
 		log("clave= " + clave);
 		int indice = 1;
 		for(char c : clave.toCharArray()) {
-			if(anyadirCorrespondencias(c + "" ,indice)) {
+			if(anyadirCorrespondencia(c + "" ,indice)) {
 				indice++;
 			}
 
@@ -104,7 +104,7 @@ public class Main {
 
 	}
 
-	public static boolean anyadirCorrespondencias(String letra ,Integer numero) {
+	public static boolean anyadirCorrespondencia(String letra ,Integer numero) {
 
 		log("añadircorrespondencias: letra= "+ letra + "  numero= "  + Integer.toString(numero));
 		if(correspondencias.get(letra)<=0) {
@@ -116,7 +116,18 @@ public class Main {
 		return false;
 	}
 
+	public static void anyadirCorrespondencias(String palabra, ArrayList <Integer> numeros) {
+		//comprobar que la longitud de palabra y numeros sea la misma
+		for ( int i=0; i<palabra.length(); i++){
+			anyadirCorrespondencia(palabra.charAt(i) + "",numeros.get(i));
+		}
+	}
+
 	public static void resolverCorrespondencias() {
+		for(ArrayList <Integer> enteros : palabrasDecodificadas ) {
+			String s = buscarCorrespondencia(enteros);
+			anyadirCorrespondencias(s,enteros);
+		}
 
 	}
 
@@ -142,7 +153,7 @@ public class Main {
 		return posicion;
 	}
 
-	public static String buscarCorrespondencias(ArrayList <Integer> p) {
+	public static String buscarCorrespondencia(ArrayList <Integer> p) {
 		ArrayList <String> pnl = devolverPlalabrasNLetras(p.size());
 		ArrayList <Integer> probabilidades = new ArrayList <Integer>();
 
