@@ -18,6 +18,8 @@ public class Main {
 		
 		decodificarPalabras();
 		resolverCorrespondencias();
+		log("correspondencias= " + correspondencias);
+
 
 	}
 
@@ -63,7 +65,7 @@ public class Main {
 			}
 
 		}
-
+		log("correspondencias= " + correspondencias);
 		String linea = "";
 
 		do{
@@ -74,13 +76,18 @@ public class Main {
 			}
 
 		}while(!linea.equals("*"));
-
+		log("diccionario= " + diccionario);
 	}
 
 	public static void inicializarCorrespondencias(String palabra) {
+		log("inicializarCorrespondencias= " + palabra);
 		for(int i=0; i<palabra.length(); i++) {
-			correspondencias.put(palabra.charAt(i) + "",0);
+			if(!correspondencias.containsKey(palabra.charAt(i) + "")) {
+				//log("correspondencia= " + palabra.charAt(i));
+				correspondencias.put(palabra.charAt(i) + "",0);
+			}
 		}
+		log("correspondencias= " + correspondencias);
 	}
 
 	public static void decodificarPalabras() {
@@ -92,6 +99,7 @@ public class Main {
 				}
 			}
 			palabrasDecodificadas.add(a);
+			log("palabrasDecodificadas: " +palabras.get(i) + "----" + palabrasDecodificadas.get(i));
 		}
 
 	}
@@ -101,13 +109,57 @@ public class Main {
 		log("añadircorrespondencias: letra= "+ letra + "  numero= "  + Integer.toString(numero));
 		if(correspondencias.get(letra)<=0) {
 			correspondencias.put(letra,numero);
+
 			return true;
 		}
+
 		return false;
 	}
 
 	public static void resolverCorrespondencias() {
 
+	}
+
+	public static ArrayList <String> devolverPlalabrasNLetras(int n) {
+		ArrayList <String> result = new ArrayList <String> ();
+		for(String s : diccionario) {
+			if(s.length()==n) {
+				result.add(s);
+			}
+		}
+		return result;
+	}
+
+	public static int posicionDeMaximo(ArrayList <Integer> m) {
+		int posicion = 0;
+		Integer maximo = 0;
+		for (int i=0; i<m.size(); i++) {
+			if(m.get(i) > maximo) {
+				maximo = m.get(i);
+				posicion = i;
+			}
+		}
+		return posicion;
+	}
+
+	public static String buscarCorrespondencias(ArrayList <Integer> p) {
+		ArrayList <String> pnl = devolverPlalabrasNLetras(p.size());
+		ArrayList <Integer> probabilidades = new ArrayList <Integer>();
+
+		for(String s : pnl) {
+			int coincidencias = 0;
+			for(int i=0; i<p.size(); i++) {
+				String letra = s.charAt(i) + "";
+				if(correspondencias.containsKey(letra)) {
+					if(correspondencias.get(letra)==p.get(i)) {
+						coincidencias++;
+
+					}
+				}
+			}
+			probabilidades.add(coincidencias);
+		}
+		return pnl.get(posicionDeMaximo(probabilidades));
 	}
 
 	public static void log(String msj) {
