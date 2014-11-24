@@ -1,6 +1,7 @@
 import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
 public class Main {
 	private static boolean logenabled = true;
@@ -19,7 +20,7 @@ public class Main {
 		decodificarPalabras();
 		resolverCorrespondencias();
 		log("correspondencias= " + correspondencias);
-
+		imprimirCorrespondencias();
 
 	}
 
@@ -171,6 +172,33 @@ public class Main {
 			probabilidades.add(coincidencias);
 		}
 		return pnl.get(posicionDeMaximo(probabilidades));
+	}
+
+	public static void imprimirCorrespondencias() {
+		ArrayList<String> a = new ArrayList<String>();
+		
+		Iterator it = correspondencias.keySet().iterator();
+		
+		for(int i=0; i<correspondencias.size(); i++){
+			a.add(i,"%");
+		}
+		while(it.hasNext()){
+		  String key = (String) it.next();
+		  
+		  	if(correspondencias.get(key)!=0) {
+			  a.remove((int)correspondencias.get(key)-1);
+			  a.add((int)correspondencias.get(key)-1,key);
+		 	}
+		}
+		
+		for(int j=0; j<a.size(); j++){
+			if(!a.get(j).equals("%")){
+				System.out.print(a.get(j));
+			}
+		}
+
+		System.out.println();
+		
 	}
 
 	public static void log(String msj) {
