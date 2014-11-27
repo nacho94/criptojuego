@@ -15,26 +15,40 @@ public class Main {
 	private static HashMap <String, Integer> correspondencias = new HashMap < String,Integer>();
 
 	public static void main(String [] args) {
-		pedirEntrada();
-		
-		decodificarPalabras();
-		resolverCorrespondencias();
-		log("correspondencias= " + correspondencias);
-		imprimirCorrespondencias();
+		Scanner scan = new Scanner(System.in);
 
+		pedirNumTests(scan);
+		
+		for(int i=0; i<numTest; i++) {
+			limpiar();
+			pedirTest(scan);
+		
+			decodificarPalabras();
+			resolverCorrespondencias();
+			log("correspondencias= " + correspondencias);
+			imprimirCorrespondencias();
+		}
 	}
 
-	public static void pedirEntrada () {
+	private static void limpiar () {
+		numLetras = 0;
+		numPalabras = 0;
+		palabras.clear();
+		palabrasDecodificadas.clear();
+		clave = "";
+		diccionario.clear();
+		correspondencias.clear();
 
-		Scanner scan = new Scanner(System.in);
+	}
+	public static void pedirNumTests (Scanner scan) {
+
+		
 
 		
 		numTest = scan.nextInt();
 		log("numTest= " + Integer.toString(numTest));
 
-		for(int i=0; i<numTest; i++) {
-			pedirTest(scan);
-		}
+		
 
 	}
 
@@ -155,7 +169,9 @@ public class Main {
 	}
 
 	public static String buscarCorrespondencia(ArrayList <Integer> p) {
+		log("buscarCorrespondencia: N= " + Integer.toString(p.size()));
 		ArrayList <String> pnl = devolverPlalabrasNLetras(p.size());
+		log("palabras de n letras= " + pnl);
 		ArrayList <Integer> probabilidades = new ArrayList <Integer>();
 
 		for(String s : pnl) {
@@ -171,6 +187,9 @@ public class Main {
 			}
 			probabilidades.add(coincidencias);
 		}
+		log("probabilidades= " + probabilidades);
+		int posicion = posicionDeMaximo(probabilidades);
+		log("posicion Maximo= " + Integer.toString(posicion));
 		return pnl.get(posicionDeMaximo(probabilidades));
 	}
 
