@@ -118,16 +118,20 @@ public class Main {
 		}
 
 	}
+	public static boolean existeValorCorrespondecia(int numero) {
+		return correspondencias.containsValue(numero);
 
+	}
 	public static boolean anyadirCorrespondencia(String letra ,Integer numero) {
 
-		log("añadircorrespondencias: letra= "+ letra + "  numero= "  + Integer.toString(numero));
-		if(correspondencias.get(letra)<=0) {
-			correspondencias.put(letra,numero);
+		
+		if(!existeValorCorrespondecia(numero) && correspondencias.get(letra)<=0) {
 
+			correspondencias.put(letra,numero);
+			log("añadircorrespondencia: letra= "+ letra + "  numero= "  + Integer.toString(numero));
 			return true;
 		}
-
+		log("NO añadircorrespondencia: letra= "+ letra + "  numero= "  + Integer.toString(numero));
 		return false;
 	}
 
@@ -136,11 +140,16 @@ public class Main {
 		for ( int i=0; i<palabra.length(); i++){
 			anyadirCorrespondencia(palabra.charAt(i) + "",numeros.get(i));
 		}
+		log("correspondencias=" + correspondencias);
 	}
 
 	public static void resolverCorrespondencias() {
 		for(ArrayList <Integer> enteros : palabrasDecodificadas ) {
+			limpiarDiccionario();
 			String s = buscarCorrespondencia(enteros);
+			if(s.equals("")) {
+				continue;
+			}
 			anyadirCorrespondencias(s,enteros);
 		}
 
@@ -156,16 +165,48 @@ public class Main {
 		return result;
 	}
 
-	public static int posicionDeMaximo(ArrayList <Integer> m) {
+	public static int[] posicionDeMaximo(ArrayList <Integer> m) {
+		int [] resultado = new int [3];
 		int posicion = 0;
 		Integer maximo = 0;
 		for (int i=0; i<m.size(); i++) {
 			if(m.get(i) > maximo) {
 				maximo = m.get(i);
-				posicion = i;
+				resultado[0]=i;
+				resultado[1]=maximo;
 			}
 		}
-		return posicion;
+		resultado[2]=0;
+		for (int i=0; i<m.size(); i++) {
+			if(m.get(i)==resultado[1]) {
+				resultado[2]++;
+			}
+
+		}
+		return resultado;
+	}
+
+	public static void limpiarDiccionario() {
+		Iterator <String> it = diccionario.iterator();
+		while(it.hasNext()) {
+			String p = it.next();
+			if(tieneTodasLasLetrasAsignadas(p)) {
+				log("borrando palabra " + p);
+				it.remove();
+			}
+		}
+			
+		log("diccionario= " + diccionario);
+	}
+
+	public static boolean tieneTodasLasLetrasAsignadas(String palabra) {
+		boolean result = true;
+		for(char c : palabra.toCharArray()) {
+			result = result && correspondencias.get(c + "")!=0;
+
+			
+		}
+		return result;
 	}
 
 	public static String buscarCorrespondencia(ArrayList <Integer> p) {
@@ -188,9 +229,13 @@ public class Main {
 			probabilidades.add(coincidencias);
 		}
 		log("probabilidades= " + probabilidades);
-		int posicion = posicionDeMaximo(probabilidades);
-		log("posicion Maximo= " + Integer.toString(posicion));
-		return pnl.get(posicionDeMaximo(probabilidades));
+		int [] posicion = posicionDeMaximo(probabilidades);
+		log("posicion Maximo= " + Integer.toString(posicion[0]));
+		if(posicion[2]>1) {
+			log("palabra con " + Integer.toString(posicion[2]) + " maximos " + pnl.get(posicion[0]));
+			return "";
+		}
+		return pnl.get(posicion[0]);
 	}
 
 	public static void imprimirCorrespondencias() {
