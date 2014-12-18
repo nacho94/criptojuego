@@ -13,6 +13,7 @@ public class Main {
 	private static String clave = "";
 	private static ArrayList <String> diccionario = new ArrayList <String>();
 	private static HashMap <String, Integer> correspondencias = new HashMap < String,Integer>();
+	private static ArrayList <ArrayList <Integer>> palabrasNoCodificadas = new ArrayList <ArrayList <Integer>>();
 
 	public static void main(String [] args) {
 		Scanner scan = new Scanner(System.in);
@@ -38,6 +39,7 @@ public class Main {
 		clave = "";
 		diccionario.clear();
 		correspondencias.clear();
+		palabrasNoCodificadas.clear();
 
 	}
 	public static void pedirNumTests (Scanner scan) {
@@ -144,15 +146,35 @@ public class Main {
 	}
 
 	public static void resolverCorrespondencias() {
+
 		for(ArrayList <Integer> enteros : palabrasDecodificadas ) {
 			limpiarDiccionario();
 			String s = buscarCorrespondencia(enteros);
 			if(s.equals("")) {
+				palabrasNoCodificadas.add(enteros);
+				continue;
+			}
+			if(s.equals("e")) {
+				
 				continue;
 			}
 			anyadirCorrespondencias(s,enteros);
 		}
 
+		log("palabrasNoCodificadas= " + palabrasNoCodificadas);
+
+		for(ArrayList <Integer> enteros1 : palabrasNoCodificadas ) {
+			limpiarDiccionario();
+			String s = buscarCorrespondencia(enteros1);
+			if(s.equals("")) {
+				continue;
+			}
+			if(s.equals("e")) {
+				
+				continue;
+			}
+			anyadirCorrespondencias(s,enteros1);
+		}
 	}
 
 	public static ArrayList <String> devolverPlalabrasNLetras(int n) {
@@ -172,11 +194,11 @@ public class Main {
 		for (int i=0; i<m.size(); i++) {
 			if(m.get(i) > maximo) {
 				maximo = m.get(i);
-				resultado[0]=i;
-				resultado[1]=maximo;
+				resultado[0]=i; // Posicion del maximo
+				resultado[1]=maximo; // valor del maximo
 			}
 		}
-		resultado[2]=0;
+		resultado[2]=0; // numero de veces que se repite el maximo
 		for (int i=0; i<m.size(); i++) {
 			if(m.get(i)==resultado[1]) {
 				resultado[2]++;
@@ -213,6 +235,9 @@ public class Main {
 		log("buscarCorrespondencia: N= " + Integer.toString(p.size()));
 		ArrayList <String> pnl = devolverPlalabrasNLetras(p.size());
 		log("palabras de n letras= " + pnl);
+		if(pnl.isEmpty()) {
+			return "e";
+		}
 		ArrayList <Integer> probabilidades = new ArrayList <Integer>();
 
 		for(String s : pnl) {
@@ -233,6 +258,7 @@ public class Main {
 		log("posicion Maximo= " + Integer.toString(posicion[0]));
 		if(posicion[2]>1) {
 			log("palabra con " + Integer.toString(posicion[2]) + " maximos " + pnl.get(posicion[0]));
+			
 			return "";
 		}
 		return pnl.get(posicion[0]);
