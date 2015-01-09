@@ -161,20 +161,45 @@ public class Main {
 			anyadirCorrespondencias(s,enteros);
 		}
 
-		log("palabrasNoCodificadas= " + palabrasNoCodificadas);
+		int limite = 1000;
+		while(!comprobar() && limite-->0) {
+			log("[PALABRASNOCODIFICADAS]= " + palabrasNoCodificadas);
 
-		for(ArrayList <Integer> enteros1 : palabrasNoCodificadas ) {
-			limpiarDiccionario();
-			String s = buscarCorrespondencia(enteros1);
-			if(s.equals("")) {
-				continue;
-			}
-			if(s.equals("e")) {
+			for(ArrayList <Integer> enteros1 : palabrasNoCodificadas ) {
+				limpiarDiccionario();
+				String s = buscarCorrespondencia(enteros1);
+				if(s.equals("")) {
+					
+					continue;
+					
+				}
+				if(s.equals("e")) {
+					
+					continue;
+				}
+				anyadirCorrespondencias(s,enteros1);
 				
-				continue;
 			}
-			anyadirCorrespondencias(s,enteros1);
+
 		}
+		if(limite<=0) {
+			log("ERROR: bucle infinito");
+		}
+
+	}
+	public static boolean comprobar() {
+		int contador = 0;
+		Iterator it = correspondencias.keySet().iterator();
+		
+		while(it.hasNext()){
+		  String key = (String) it.next();
+		  
+		  	if(correspondencias.get(key)!=0) {
+			 contador++;
+		 	}
+		}
+		
+		return contador == numLetras;
 	}
 
 	public static ArrayList <String> devolverPlalabrasNLetras(int n) {
@@ -188,6 +213,10 @@ public class Main {
 	}
 
 	public static int[] posicionDeMaximo(ArrayList <Integer> m) {
+		return posicionDeMaximo(m,0);
+	}
+
+	public static int[] posicionDeMaximo(ArrayList <Integer> m, int offset) {
 		int [] resultado = new int [3];
 		int posicion = 0;
 		Integer maximo = 0;
