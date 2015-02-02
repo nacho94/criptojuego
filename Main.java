@@ -2,9 +2,10 @@ import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.HashSet;
 
 public class Main {
-	private static boolean logenabled = true;
+	private static boolean logenabled = false;
 	private static int numTest = 0;
 	private static int numLetras = 0;
 	private static int numPalabras = 0;
@@ -161,7 +162,7 @@ public class Main {
 			anyadirCorrespondencias(s,enteros);
 		}
 
-		int limite = 1000;
+		int limite = 100;
 		while(!comprobar() && limite-->0) {
 			log("[PALABRASNOCODIFICADAS]= " + palabrasNoCodificadas);
 
@@ -219,9 +220,12 @@ public class Main {
 	public static int[] posicionDeMaximo(ArrayList <Integer> m, int offset) {
 		int [] resultado = new int [3];
 		int posicion = 0;
-		Integer maximo = 0;
+		int maximo = 0;
 		for (int i=0; i<m.size(); i++) {
-			if(m.get(i) > maximo) {
+
+			int numero = m.get(i);
+			
+			if(numero >= maximo) {
 				maximo = m.get(i);
 				resultado[0]=i; // Posicion del maximo
 				resultado[1]=maximo; // valor del maximo
@@ -246,7 +250,21 @@ public class Main {
 				it.remove();
 			}
 		}
-			
+		ArrayList<String> lista = new ArrayList<String>();
+Iterator <String> itr = diccionario.iterator();
+		while(itr.hasNext()) {
+			String elemento = itr.next();
+			if(!lista.contains(elemento)) {
+				lista.add(elemento);
+			}
+		}
+		log("lista= " + lista);
+		diccionario.clear();
+		diccionario = lista;
+		
+       
+		
+		
 		log("diccionario= " + diccionario);
 	}
 
@@ -268,12 +286,28 @@ public class Main {
 			return "e";
 		}
 		ArrayList <Integer> probabilidades = new ArrayList <Integer>();
-
+		log("pnl= " + pnl);
 		for(String s : pnl) {
 			int coincidencias = 0;
 			for(int i=0; i<p.size(); i++) {
 				String letra = s.charAt(i) + "";
+				/*log("LETRA= " + letra);*/
 				if(correspondencias.containsKey(letra)) {
+					
+						if(i>0 && s.charAt(i-1)==(s.charAt(i)) ){
+							if(p.get(i-1)!=p.get(i)) {
+								coincidencias=(-1);
+								break;
+							}
+					}
+					
+					if(correspondencias.get(letra)!=0) {
+						if(correspondencias.get(letra)!=p.get(i)){
+							coincidencias=-1;
+							log("-------------------------");
+							break;
+						}
+					}
 					if(correspondencias.get(letra)==p.get(i)) {
 						coincidencias++;
 
