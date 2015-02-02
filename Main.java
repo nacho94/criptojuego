@@ -205,7 +205,7 @@ public class Main {
 		while(it.hasNext()){
 		  String key = (String) it.next();
 		  
-		  	if(correspondencias.get(key).size() > 0) {
+		  	if(correspondencias.get(key) != null && correspondencias.get(key).size() > 0) {
 			 contador++;
 		 	}
 		}
@@ -281,7 +281,7 @@ Iterator <String> itr = diccionario.iterator();
 	public static boolean tieneTodasLasLetrasAsignadas(String palabra) {
 		boolean result = true;
 		for(char c : palabra.toCharArray()) {
-			result = result && correspondencias.get(c + "").size() > 0;
+			result = result && correspondencias.get(c + "") != null && correspondencias.get(c + "").size() > 0;
 
 			
 		}
@@ -301,27 +301,35 @@ Iterator <String> itr = diccionario.iterator();
 			int coincidencias = 0;
 			for(int i=0; i<p.size(); i++) {
 				String letra = s.charAt(i) + "";
-				/*log("LETRA= " + letra);*/
-				if(correspondencias.containsKey(letra)) {
-					
-						if(i>0 && s.charAt(i-1)==(s.charAt(i)) ){
-							if(p.get(i-1)!=p.get(i)) {
-								coincidencias=(-1);
+				log("LETRA= " + letra);
+				log("p.get(" + i +")= " + p.get(i));
+				if(p.get(i) != -1) {
+							
+							
+					if(correspondencias.containsKey(letra)) {
+						
+							if(i>0 && s.charAt(i-1)==(s.charAt(i)) ){
+								if(p.get(i-1)!=p.get(i)) {
+									coincidencias=(-1);
+									break;
+								}
+						}
+						
+						if(correspondencias.get(letra) != null && correspondencias.get(letra).size()>0) {
+
+							if(correspondencias.get(letra).get(0)!=p.get(i)){
+								coincidencias=-1;
+								log("-------------------------");
 								break;
 							}
-					}
-					
-					if(correspondencias.get(letra).size()>0) {
-						if(correspondencias.get(letra).get(0)!=p.get(i)){
-							coincidencias=-1;
-							log("-------------------------");
-							break;
+						}
+						if(correspondencias.get(letra) != null && correspondencias.get(letra).size()>0  && correspondencias.get(letra).get(0)==p.get(i)) {
+							coincidencias++;
+
 						}
 					}
-					if(correspondencias.get(letra).size()>0  && correspondencias.get(letra).get(0)==p.get(i)) {
-						coincidencias++;
-
-					}
+				}else{
+					correspondencias.put(letra,null);
 				}
 			}
 			probabilidades.add(coincidencias);
@@ -336,32 +344,75 @@ Iterator <String> itr = diccionario.iterator();
 		}
 		return pnl.get(posicion[0]);
 	}
+	public static String devolverLetrasComodin() {
+		String result = "";
+		Iterator it = correspondencias.keySet().iterator();
+
+		while(it.hasNext()){
+		  String key = (String) it.next();
+		  if(correspondencias.get(key) == null) {
+		  	result += key;
+		  }
+		}
+		return result;
+	}
+	private  static void swap(StringBuffer str, int pos1, int pos2){
+	    char t1 = str.charAt(pos1);
+	    str.setCharAt(pos1, str.charAt(pos2));
+	    str.setCharAt(pos2, t1);
+	} 
+
+	private static void doPerm(StringBuffer str, int index, ArrayList<String> lista){
+
+	    if(index <= 0)
+	        lista.add(str.toString());          
+	    else { //recursively solve this by placing all other chars at current first pos
+	        doPerm(str, index-1,lista);
+	        int currPos = str.length()-index;
+	        for (int i = currPos+1; i < str.length(); i++) {//start swapping all other chars with current first char
+	            swap(str,currPos, i);
+	            doPerm(str, index-1,lista);
+	            swap(str,i, currPos);//restore back my string buffer
+	        }
+	    }
+	}
+
+	public static String devolverLetraEnPosicion(int posicion) {
+		Iterator it = correspondencias.keySet().iterator();
+
+		while(it.hasNext()){
+		  String key = (String) it.next();
+		  if(correspondencias.get(key) != null && correspondencias.get(key).size() >0 && correspondencias.get(key).get(0) == posicion){
+		  	return key;
+		  }
+		}
+		return "";
+	}
 
 	public static void imprimirCorrespondencias() {
 		ArrayList<String> a = new ArrayList<String>();
-		
-		Iterator it = correspondencias.keySet().iterator();
-		
-		for(int i=0; i<correspondencias.size(); i++){
-			a.add(i,"%");
-		}
-		while(it.hasNext()){
-		  String key = (String) it.next();
-		  
-		  	if(correspondencias.get(key).size()>0) {
-			  a.remove((int)correspondencias.get(key).get(0)-1);
-			  a.add((int)correspondencias.get(key).get(0)-1,key);
-		 	}
-		}
-		
-		for(int j=0; j<a.size(); j++){
-			if(!a.get(j).equals("%")){
-				System.out.print(a.get(j));
+		String lc = devolverLetrasComodin();
+		log("letrascomodin= " + lc);
+
+		ArrayList<String> lista = new ArrayList<String>();
+		doPerm(new StringBuffer(lc),lc.length(),lista);
+		log("listaPermutaciones= " + lista);
+
+		for(int indicePermutacion = 0; indicePermutacion<lista.size(); indicePermutacion++) {
+			for(int i =0; i<correspondencias.size(); i++) {
+
+				String letra = devolverLetraEnPosicion(i+1);
+				if(!letra.equals("")) {
+					System.out.print(letra);
+				}else{
+					System.out.print(lista.get(indicePermutacion));
+					i += lc.length()-1;
+				}
 			}
+			System.out.println();
 		}
 
 		System.out.println();
-		
 	}
 
 	public static void log(String msj) {
