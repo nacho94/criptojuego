@@ -5,7 +5,7 @@ import java.util.Iterator;
 import java.util.HashSet;
 
 public class Main {
-	private static boolean logenabled = false;
+	private static boolean logenabled = true;
 	private static int numTest = 0;
 	private static int numLetras = 0;
 	private static int numPalabras = 0;
@@ -13,7 +13,7 @@ public class Main {
 	private static ArrayList <ArrayList <Integer>> palabrasDecodificadas = new ArrayList <ArrayList <Integer>>();
 	private static String clave = "";
 	private static ArrayList <String> diccionario = new ArrayList <String>();
-	private static HashMap <String, Integer> correspondencias = new HashMap < String,Integer>();
+	private static HashMap <String, ArrayList<Integer>> correspondencias = new HashMap < String,ArrayList<Integer>>();
 	private static ArrayList <ArrayList <Integer>> palabrasNoCodificadas = new ArrayList <ArrayList <Integer>>();
 
 	public static void main(String [] args) {
@@ -102,7 +102,7 @@ public class Main {
 		for(int i=0; i<palabra.length(); i++) {
 			if(!correspondencias.containsKey(palabra.charAt(i) + "")) {
 				//log("correspondencia= " + palabra.charAt(i));
-				correspondencias.put(palabra.charAt(i) + "",0);
+				correspondencias.put(palabra.charAt(i) + "",new ArrayList<Integer>());
 			}
 		}
 		log("correspondencias= " + correspondencias);
@@ -122,15 +122,25 @@ public class Main {
 
 	}
 	public static boolean existeValorCorrespondecia(int numero) {
-		return correspondencias.containsValue(numero);
+		
+		Iterator it = correspondencias.keySet().iterator();
+		
+		while(it.hasNext()){
+		  String key = (String) it.next();
+		  
+		  	if(correspondencias.get(key).contains(numero) ){
+		  		return true;
+		 	}
 
+		}
+		return false;
 	}
 	public static boolean anyadirCorrespondencia(String letra ,Integer numero) {
 
 		
-		if(!existeValorCorrespondecia(numero) && correspondencias.get(letra)<=0) {
+		if(!existeValorCorrespondecia(numero) && correspondencias.get(letra).size() <= 0) {
 
-			correspondencias.put(letra,numero);
+			correspondencias.get(letra).add(numero);
 			log("añadircorrespondencia: letra= "+ letra + "  numero= "  + Integer.toString(numero));
 			return true;
 		}
@@ -195,7 +205,7 @@ public class Main {
 		while(it.hasNext()){
 		  String key = (String) it.next();
 		  
-		  	if(correspondencias.get(key)!=0) {
+		  	if(correspondencias.get(key).size() > 0) {
 			 contador++;
 		 	}
 		}
@@ -271,7 +281,7 @@ Iterator <String> itr = diccionario.iterator();
 	public static boolean tieneTodasLasLetrasAsignadas(String palabra) {
 		boolean result = true;
 		for(char c : palabra.toCharArray()) {
-			result = result && correspondencias.get(c + "")!=0;
+			result = result && correspondencias.get(c + "").size() > 0;
 
 			
 		}
@@ -301,14 +311,14 @@ Iterator <String> itr = diccionario.iterator();
 							}
 					}
 					
-					if(correspondencias.get(letra)!=0) {
-						if(correspondencias.get(letra)!=p.get(i)){
+					if(correspondencias.get(letra).size()>0) {
+						if(correspondencias.get(letra).get(0)!=p.get(i)){
 							coincidencias=-1;
 							log("-------------------------");
 							break;
 						}
 					}
-					if(correspondencias.get(letra)==p.get(i)) {
+					if(correspondencias.get(letra).size()>0  && correspondencias.get(letra).get(0)==p.get(i)) {
 						coincidencias++;
 
 					}
@@ -338,9 +348,9 @@ Iterator <String> itr = diccionario.iterator();
 		while(it.hasNext()){
 		  String key = (String) it.next();
 		  
-		  	if(correspondencias.get(key)!=0) {
-			  a.remove((int)correspondencias.get(key)-1);
-			  a.add((int)correspondencias.get(key)-1,key);
+		  	if(correspondencias.get(key).size()>0) {
+			  a.remove((int)correspondencias.get(key).get(0)-1);
+			  a.add((int)correspondencias.get(key).get(0)-1,key);
 		 	}
 		}
 		
