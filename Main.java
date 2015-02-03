@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.Collections;
 
 public class Main {
-	private static boolean logenabled = false;
+	private static boolean logenabled = true;
 	private static int numTest = 0;
 	private static int numLetras = 0;
 	private static int numPalabras = 0;
@@ -129,7 +129,7 @@ public class Main {
 		while(it.hasNext()){
 		  String key = (String) it.next();
 		  
-		  	if(correspondencias.get(key).contains(numero) ){
+		  	if(correspondencias.get(key) != null && correspondencias.get(key).contains(numero) ){
 		  		return true;
 		 	}
 
@@ -139,7 +139,7 @@ public class Main {
 	public static boolean anyadirCorrespondencia(String letra ,Integer numero) {
 
 		
-		if(!existeValorCorrespondecia(numero) && correspondencias.get(letra).size() <= 0) {
+		if(!existeValorCorrespondecia(numero) && correspondencias.get(letra).isEmpty()) {
 
 			correspondencias.get(letra).add(numero);
 			log("añadircorrespondencia: letra= "+ letra + "  numero= "  + Integer.toString(numero));
@@ -330,7 +330,14 @@ Iterator <String> itr = diccionario.iterator();
 						}
 					}
 				}else{
-					correspondencias.put(letra,null);
+					if(correspondencias.get(letra) != null && correspondencias.get(letra).size()>0) {
+						coincidencias=-1;
+						break;
+					}else{
+						correspondencias.put(letra,null);
+					}
+					log("correspondencias= " + correspondencias);
+					
 				}
 			}
 			probabilidades.add(coincidencias);
