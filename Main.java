@@ -3,9 +3,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.HashSet;
+import java.util.Collections;
 
 public class Main {
-	private static boolean logenabled = true;
+	private static boolean logenabled = false;
 	private static int numTest = 0;
 	private static int numLetras = 0;
 	private static int numPalabras = 0;
@@ -397,22 +398,38 @@ Iterator <String> itr = diccionario.iterator();
 		ArrayList<String> lista = new ArrayList<String>();
 		doPerm(new StringBuffer(lc),lc.length(),lista);
 		log("listaPermutaciones= " + lista);
+		if(lc.equals("")){
 
-		for(int indicePermutacion = 0; indicePermutacion<lista.size(); indicePermutacion++) {
 			for(int i =0; i<correspondencias.size(); i++) {
 
 				String letra = devolverLetraEnPosicion(i+1);
-				if(!letra.equals("")) {
-					System.out.print(letra);
-				}else{
-					System.out.print(lista.get(indicePermutacion));
-					i += lc.length()-1;
-				}
+				
+				System.out.print(letra);
 			}
 			System.out.println();
-		}
+		}else{
 
-		System.out.println();
+			ArrayList<String> aux = new ArrayList<String>();
+			for(int indicePermutacion = 0; indicePermutacion<lista.size(); indicePermutacion++) {
+				String palaAux = "";
+				for(int i =0; i<correspondencias.size(); i++) {
+
+					String letra = devolverLetraEnPosicion(i+1);
+					if(!letra.equals("")) {
+						palaAux += letra;
+					}else{
+						palaAux += lista.get(indicePermutacion);
+						i += lc.length()-1;
+					}
+				}
+				aux.add(palaAux);
+			}
+			Collections.sort(aux);
+			for(String s : aux) {
+				System.out.println(s);
+				
+			}
+		}
 	}
 
 	public static void log(String msj) {
